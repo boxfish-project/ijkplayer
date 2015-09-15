@@ -24,7 +24,8 @@
 #include "ijksdl_timer.h"
 #include <unistd.h>
 #include <string.h>
-#include <time.h>
+//#include <time.h>
+#include <libavutil/time.h>
 #include <sys/time.h>
 
 #if defined(__APPLE__)
