@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "ijkplayer"
-  s.version      = "0.3.2-rc.3"
+  s.version      = "0.4.0-ffmpeg-2.8"
   s.summary      = "Video player based on FFmpeg n2.7"
   s.homepage     = "https://github.com/Bilibili/ijkplayer"
 
@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
 
   s.platform     = :ios, '6.0'
 
-  s.source       = { :git => "https://github.com/Bilibili/ijkplayer.git", :tag => "k#{s.version}" }
+  s.source       = { :git => "https://github.com/boxfish-project/ijkplayer.git", :tag => "k#{s.version}" }
 
   s.frameworks     = 'AudioToolbox', 'AVFoundation', 'CoreAudio', 'CoreGraphics', 'CoreMedia', 'CoreVideo', 'MediaPlayer', 'OpenGLES', 'UIKit', 'QuartzCore'
   s.weak_framework = 'VideoToolbox'
@@ -32,7 +32,7 @@ Pod::Spec.new do |s|
     ss.header_mappings_dir  = 'ios/IJKMediaPlayer'
 
     ss.exclude_files        = 'ios/IJKMediaPlayer/IJKMediaPlayer/ijkmedia/**/*'
-end
+  end
 
 
   s.subspec 'ijkplayer-ios' do |ss|
@@ -45,7 +45,7 @@ end
     ss.header_mappings_dir  = 'ios/IJKMediaPlayer/IJKMediaPlayer/ijkmedia'
 
     ss.exclude_files        = 'ios/IJKMediaPlayer/IJKMediaPlayer/ijkmedia/ijkplayer/ios/ijkplayer_ios.m'
-end
+  end
 
   s.subspec 'ijkplayer-ios-mrc' do |ss|
     ss.dependency 'ijkplayer/ijkplayer'
@@ -58,7 +58,7 @@ end
     'ios/IJKMediaPlayer/IJKMediaPlayer/ijkmedia/ijkplayer/**/*.h']
     ss.private_header_files = 'ios/IJKMediaPlayer/IJKMediaPlayer/ijkmedia/ijkplayer/**/*.h'
     ss.header_mappings_dir  = 'ios/IJKMediaPlayer/IJKMediaPlayer/ijkmedia'
-end
+  end
 
   s.subspec 'ijksdl-ios' do |ss|
     ss.dependency 'ijkplayer/ijksdl'
@@ -68,7 +68,7 @@ end
     ss.header_mappings_dir  = 'ios/IJKMediaPlayer/IJKMediaPlayer/ijkmedia'
 
     ss.exclude_files        = ['ios/IJKMediaPlayer/IJKMediaPlayer/ijkmedia/ijksdl/ios/ijksdl_aout_ios_audiounit.m', 'ios/IJKMediaPlayer/IJKMediaPlayer/ijkmedia/ijksdl/ios/ijksdl_vout_ios_gles2.m']
-end
+  end
 
   s.subspec 'ijksdl-ios-mrc' do |ss|
     ss.dependency 'ijkplayer/ijksdl'
@@ -78,7 +78,7 @@ end
     'ios/IJKMediaPlayer/IJKMediaPlayer/ijkmedia/ijksdl/**/*.h']
     ss.private_header_files = 'ios/IJKMediaPlayer/IJKMediaPlayer/ijkmedia/ijksdl/**/*.h'
     ss.header_mappings_dir  = 'ios/IJKMediaPlayer/IJKMediaPlayer/ijkmedia'
-end
+  end
 
 
   s.subspec 'ijkplayer' do |ss|
@@ -88,15 +88,16 @@ end
     ss.private_header_files = 'ijkmedia/ijkplayer/**/*.h'
     ss.exclude_files        = 'ijkmedia/ijkplayer/android/**/*'
     ss.header_mappings_dir  = 'ijkmedia'
-end
+  end
 
   s.subspec 'ijksdl' do |ss|
-    ss.dependency 'FFmpeg4ijkplayer-ios-bin', '0.3.1-rc.7'
+    # ss.dependency 'FFmpeg4ijkplayer-ios-bin', '0.3.1-rc.7'
+    ss.dependency 'FFmpeg4ijkplayer-ios-bin', '0.3.1-build-20150915'
 
     ss.source_files         = 'ijkmedia/ijksdl/**/*.{c,h}'
     ss.private_header_files = 'ijkmedia/ijksdl/**/*.h'
     ss.exclude_files        = 'ijkmedia/ijksdl/android/**/*'
     ss.header_mappings_dir  = 'ijkmedia'
-end
+  end
 
 end
