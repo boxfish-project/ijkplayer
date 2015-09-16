@@ -43,7 +43,7 @@
 #include "libavutil/parseutils.h"
 #include "libavutil/samplefmt.h"
 #include "libavutil/avassert.h"
-#include "libavutil/time.h"
+#include "libavutil/ff_time.h"
 #include "libavformat/avformat.h"
 // FFP_MERGE: #include "libavdevice/avdevice.h"
 #include "libswscale/swscale.h"
