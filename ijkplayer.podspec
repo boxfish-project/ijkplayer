@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "ijkplayer"
-  s.version      = "0.4.0-ffmpeg-2.8"
+  s.version      = "0.4.0-ffmpeg-2.8-2"
   s.summary      = "Video player based on FFmpeg n2.7"
   s.homepage     = "https://github.com/Bilibili/ijkplayer"
 
