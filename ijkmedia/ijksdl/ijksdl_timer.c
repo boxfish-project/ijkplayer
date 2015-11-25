@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <string.h>
 //#include <time.h>
-#include <libavutil/time.h>
+#include <libavutil/ff_time.h>
 #include <sys/time.h>
 
 #if defined(__APPLE__)

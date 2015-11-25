@@ -33,7 +33,7 @@
 #include "libavutil/fifo.h"
 #include "libavutil/log.h"
 #include "libavutil/opt.h"
-#include "libavutil/time.h"
+#include "libavutil/ff_time.h"
 #include "url.h"
 #include <stdint.h>
 #include <pthread.h>
