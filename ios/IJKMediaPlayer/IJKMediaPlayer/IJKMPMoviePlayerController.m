@@ -35,7 +35,7 @@
 @dynamic playbackState;
 @dynamic loadState;
 
-@dynamic controlStyle;
+@dynamic naturalSize;
 @dynamic scalingMode;
 @dynamic shouldAutoplay;
 @synthesize isDanmakuMediaAirPlay = _isDanmakuMediaAirPlay;
@@ -46,7 +46,6 @@
 {
     self = [super initWithContentURL:aUrl];
     if (self) {
-        self.controlStyle = MPMovieControlStyleNone;
         self.scalingMode = MPMovieScalingModeAspectFit;
         self.shouldAutoplay = YES;
         [self IJK_installMovieNotificationObservers];
@@ -108,7 +107,10 @@
 
 - (UIImage *)thumbnailImageAtCurrentTime
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     return [super thumbnailImageAtTime:self.currentPlaybackTime timeOption:MPMovieTimeOptionExact];
+#pragma clang diagnostic pop
 }
 
 -(BOOL)allowsMediaAirPlay
@@ -141,7 +143,17 @@
 -(void)setIsDanmakuMediaAirPlay:(BOOL)isDanmakuMediaAirPlay
 {
     _isDanmakuMediaAirPlay = isDanmakuMediaAirPlay;
-    [[NSNotificationCenter defaultCenter] postNotificationName:IJKMoviePlayerIsAirPlayVideoActiveDidChangeNotification object:nil userInfo:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:IJKMPMoviePlayerIsAirPlayVideoActiveDidChangeNotification object:nil userInfo:nil];
+}
+
+-(void)setPlaybackRate:(float)playbackRate
+{
+    NSLog(@"[MPMoviePlayerController setPlaybackRate] is not supported\n");
+}
+
+-(float)playbackRate
+{
+    return 1.0f;
 }
 
 #pragma mark Movie Notification Handlers
@@ -186,27 +198,27 @@
 
 - (void)IJK_dispatchMPMediaPlaybackIsPreparedToPlayDidChangeNotification:(NSNotification*)notification
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:IJKMediaPlaybackIsPreparedToPlayDidChangeNotification object:notification.object userInfo:notification.userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:IJKMPMediaPlaybackIsPreparedToPlayDidChangeNotification object:notification.object userInfo:notification.userInfo];
 }
 
 - (void)IJK_dispatchMPMoviePlayerLoadStateDidChangeNotification:(NSNotification*)notification
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:IJKMoviePlayerLoadStateDidChangeNotification object:notification.object userInfo:notification.userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:IJKMPMoviePlayerLoadStateDidChangeNotification object:notification.object userInfo:notification.userInfo];
 }
 
 - (void)IJK_dispatchMPMoviePlayerPlaybackDidFinishNotification:(NSNotification*)notification
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:IJKMoviePlayerPlaybackDidFinishNotification object:notification.object userInfo:notification.userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:IJKMPMoviePlayerPlaybackDidFinishNotification object:notification.object userInfo:notification.userInfo];
 }
 
 - (void)IJK_dispatchMPMoviePlayerPlaybackStateDidChangeNotification:(NSNotification*)notification
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:IJKMoviePlayerPlaybackStateDidChangeNotification object:notification.object userInfo:notification.userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:IJKMPMoviePlayerPlaybackStateDidChangeNotification object:notification.object userInfo:notification.userInfo];
 }
 
 - (void)IJK_dispatchMoviePlayerIsAirPlayVideoActiveDidChangeNotification:(NSNotification*)notification
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:IJKMoviePlayerIsAirPlayVideoActiveDidChangeNotification object:notification.object userInfo:notification.userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:IJKMPMoviePlayerIsAirPlayVideoActiveDidChangeNotification object:notification.object userInfo:notification.userInfo];
 }
 
 - (void)setPauseInBackground:(BOOL)pause

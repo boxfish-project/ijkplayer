@@ -41,7 +41,6 @@ LOCAL_SRC_FILES += ijkplayer.c
 
 LOCAL_SRC_FILES += pipeline/ffpipeline_ffplay.c
 LOCAL_SRC_FILES += pipeline/ffpipenode_ffplay_vdec.c
-LOCAL_SRC_FILES += pipeline/ffpipenode_ffplay_vout.c
 
 LOCAL_SRC_FILES += android/ffmpeg_api_jni.c
 LOCAL_SRC_FILES += android/ijkplayer_android.c
@@ -49,16 +48,15 @@ LOCAL_SRC_FILES += android/ijkplayer_jni.c
 
 LOCAL_SRC_FILES += android/pipeline/ffpipeline_android.c
 LOCAL_SRC_FILES += android/pipeline/ffpipenode_android_mediacodec_vdec.c
-LOCAL_SRC_FILES += android/pipeline/ffpipenode_android_mediacodec_vout.c
 
 LOCAL_SRC_FILES += ijkavformat/allformats.c
 LOCAL_SRC_FILES += ijkavformat/async.c
-LOCAL_SRC_FILES += ijkavformat/ijkhttphook.c
 LOCAL_SRC_FILES += ijkavformat/ijkinject.c
 LOCAL_SRC_FILES += ijkavformat/ijklivehook.c
 LOCAL_SRC_FILES += ijkavformat/ijklongurl.c
+LOCAL_SRC_FILES += ijkavformat/ijkmediadatasource.c
 LOCAL_SRC_FILES += ijkavformat/ijksegment.c
-LOCAL_SRC_FILES += ijkavformat/ijktcphook.c
+LOCAL_SRC_FILES += ijkavformat/ijkurlhook.c
 LOCAL_SRC_FILES += ijkavformat/utils.c
 
 LOCAL_SHARED_LIBRARIES := ijkffmpeg ijksdl

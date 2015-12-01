@@ -242,8 +242,10 @@ inline static int msg_queue_get(MessageQueue *q, AVMessage *msg, int block)
 
 inline static void msg_queue_remove(MessageQueue *q, int what)
 {
-    AVMessage **p_msg, *msg, *last_msg = q->first_msg;
+    AVMessage **p_msg, *msg, *last_msg;
     SDL_LockMutex(q->mutex);
+
+    last_msg = q->first_msg;
 
     if (!q->abort_request && q->first_msg) {
         p_msg = &q->first_msg;
@@ -252,7 +254,6 @@ inline static void msg_queue_remove(MessageQueue *q, int what)
 
             if (msg->what == what) {
                 *p_msg = msg->next;
-                p_msg = &msg->next;
 #ifdef FFP_MERGE
                 av_free(msg);
 #else

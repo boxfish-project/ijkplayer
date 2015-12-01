@@ -37,6 +37,9 @@ typedef struct IJKAVInject_OnUrlOpenData {
     char    url[4096];      /* in, out */
     int     segment_index;  /* in, default = 0 */
     int     retry_counter;  /* in */
+
+    int     is_handled;     /* out, default = false */
+    int     is_url_changed; /* out, default = false */
 } IJKAVInject_OnUrlOpenData;
 
 /**

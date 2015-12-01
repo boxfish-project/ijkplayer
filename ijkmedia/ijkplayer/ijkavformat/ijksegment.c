@@ -35,7 +35,7 @@ typedef struct Context {
     /* options */
     int64_t         opaque;
     int             segment_index;
-    int             async_http;
+    char           *http_hook;
 } Context;
 
 static void *ijksegment_get_opaque(URLContext *h) {
@@ -59,8 +59,15 @@ static int ijksegment_open(URLContext *h, const char *arg, int flags, AVDictiona
     void *opaque = ijksegment_get_opaque(h);
     assert(opaque);
 
-    if (!c->opaque || !inject_callback)
+    if (!c->opaque) {
+        av_log(h, AV_LOG_ERROR, "null opaque\n");
         return AVERROR_EXTERNAL;
+    }
+
+    if (!inject_callback) {
+        av_log(h, AV_LOG_ERROR, "null inject_callback\n");
+        return AVERROR_EXTERNAL;
+    }
 
     av_strstart(arg, "ijksegment:", &arg);
     if (!arg || !*arg)
@@ -82,16 +89,10 @@ static int ijksegment_open(URLContext *h, const char *arg, int flags, AVDictiona
         goto fail;
     }
 
-    av_dict_set_int(options, "ijksegment-opaque",        c->opaque, 0);
-    av_dict_set_int(options, "ijksegment-segment-index", c->segment_index, 0);
+    av_dict_set_int(options, "ijkinject-opaque",        c->opaque, 0);
+    av_dict_set_int(options, "ijkinject-segment-index", c->segment_index, 0);
 
-    if (av_strstart(inject_data.url, "http://", NULL)) {
-        ret = ffurl_open(&c->inner, inject_data.url, flags, &h->interrupt_callback, options);
-    } else {
-        char async_url[4096] = "async:";
-        av_strlcat(async_url, inject_data.url, sizeof(async_url));
-        ret = ffurl_open(&c->inner, async_url, flags, &h->interrupt_callback, options);
-    }
+    ret = ffurl_open(&c->inner, inject_data.url, flags, &h->interrupt_callback, options);
     if (ret)
         goto fail;
 
@@ -129,8 +130,6 @@ static const AVOption options[] = {
         OFFSET(opaque),             IJKAV_OPTION_INT64(0, INT64_MIN, INT64_MAX) },
     { "ijkinject-segment-index",    "segment index of current url",
         OFFSET(segment_index),      IJKAV_OPTION_INT(0, 0, INT_MAX) },
-    { "ijksegment-async-http",      "add prefix async: to http stream",
-        OFFSET(async_http),         IJKAV_OPTION_INT(0, 0, INT_MAX) },
     { NULL }
 };
 

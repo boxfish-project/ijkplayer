@@ -93,6 +93,9 @@
 /* Calculate actual buffer size keeping in mind not cause too frequent audio callbacks */
 #define SDL_AUDIO_MAX_CALLBACKS_PER_SEC 30
 
+/* Step size for volume control */
+#define SDL_VOLUME_STEP (SDL_MIX_MAXVOLUME / 50)
+
 /* no AV sync correction is done if below the minimum AV sync threshold */
 #define AV_SYNC_THRESHOLD_MIN 0.04
 /* AV sync correction is done if above the maximum AV sync threshold */
@@ -180,7 +183,10 @@ typedef struct Clock {
 /* Common struct for handling all types of decoded data and allocated render buffers. */
 typedef struct Frame {
     AVFrame *frame;
+#ifdef FFP_MERGE
     AVSubtitle sub;
+    AVSubtitleRect **subrects;  /* rescaled subtitle rectangles in yuva */
+#endif
     int serial;
     double pts;           /* presentation timestamp for the frame */
     double duration;      /* estimated duration of the frame */
@@ -295,6 +301,8 @@ typedef struct VideoState {
     unsigned int audio_buf1_size;
     int audio_buf_index; /* in bytes */
     int audio_write_buf_size;
+    int audio_volume;
+    int muted;
     struct AudioParams audio_src;
 #if CONFIG_AVFILTER
     struct AudioParams audio_filter_src;
@@ -333,16 +341,16 @@ typedef struct VideoState {
     PacketQueue videoq;
     int64_t videoq_duration;
     double max_frame_duration;      // maximum duration of a frame - above this, we consider the jump a timestamp discontinuity
-// #if !CONFIG_AVFILTER
+#if !CONFIG_AVFILTER
     struct SwsContext *img_convert_ctx;
-// #endif
+#endif
 #ifdef FFP_SUB
     struct SwsContext *sub_convert_ctx;
     SDL_Rect last_display_rect;
 #endif
     int eof;
 
-    char filename[4096];
+    char *filename;
     int width, height, xleft, ytop;
     int step;
 
@@ -506,6 +514,7 @@ typedef struct FFPlayer {
     const char **vfilters_list;
     int nb_vfilters;
     char *afilters;
+    char *vfilter0;
 #endif
     int autorotate;
 
@@ -564,7 +573,9 @@ typedef struct FFPlayer {
     int vtb_async;
     int vtb_wait_async;
 
-    int mediacodec;
+    int mediacodec_all_videos;
+    int mediacodec_avc;
+    int mediacodec_hevc;
     int mediacodec_auto_rotate;
 
     int opensles;
@@ -572,6 +583,19 @@ typedef struct FFPlayer {
     char *iformat_name;
 
     struct IjkMediaMeta *meta;
+
+    SDL_SpeedSampler vfps_sampler;
+    SDL_SpeedSampler vdps_sampler;
+
+    float vfps;
+    float vdps;
+
+    /* filters */
+    SDL_mutex  *vf_mutex;
+    SDL_mutex  *af_mutex;
+    int         vf_changed;
+    int         af_changed;
+    float       pf_playback_rate;
 } FFPlayer;
 
 #define fftime_to_milliseconds(ts) (av_rescale(ts, 1000, AV_TIME_BASE));
@@ -616,6 +640,7 @@ inline static void ffp_reset_internal(FFPlayer *ffp)
     av_freep(&ffp->vfilters_list);
     ffp->nb_vfilters            = 0;
     ffp->afilters               = NULL;
+    ffp->vfilter0               = NULL;
 #endif
     ffp->autorotate             = 1;
 
@@ -665,7 +690,9 @@ inline static void ffp_reset_internal(FFPlayer *ffp)
     ffp->vtb_async                      = 0; // option
     ffp->vtb_wait_async                 = 0; // option
 
-    ffp->mediacodec                     = 0; // option
+    ffp->mediacodec_all_videos          = 0; // option
+    ffp->mediacodec_avc                 = 0; // option
+    ffp->mediacodec_hevc                = 0; // option
     ffp->mediacodec_auto_rotate         = 0; // option
 
     ffp->opensles                       = 0; // option
@@ -673,6 +700,17 @@ inline static void ffp_reset_internal(FFPlayer *ffp)
     ffp->iformat_name                   = NULL; // option
 
     ijkmeta_reset(ffp->meta);
+
+    SDL_SpeedSamplerReset(&ffp->vfps_sampler);
+    SDL_SpeedSamplerReset(&ffp->vdps_sampler);
+
+    ffp->vfps                           = 0.0f;
+    ffp->vdps                           = 0.0f;
+
+    /* filters */
+    ffp->vf_changed                     = 0;
+    ffp->af_changed                     = 0;
+    ffp->pf_playback_rate               = 1.0f;
 
     msg_queue_flush(&ffp->msg_queue);
 }
