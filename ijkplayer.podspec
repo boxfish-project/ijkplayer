@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "ijkplayer"
-  s.version      = "0.4.0-ffmpeg-2.8-4"
+  s.version      = "0.4.0-ffmpeg-2.8-5"
   s.summary      = "Video player based on FFmpeg n2.7"
   s.homepage     = "https://github.com/Bilibili/ijkplayer"
 
@@ -92,7 +92,7 @@ Pod::Spec.new do |s|
 
   s.subspec 'ijksdl' do |ss|
     # ss.dependency 'FFmpeg4ijkplayer-ios-bin', '0.3.1-rc.7'
-    ss.dependency 'FFmpeg4ijkplayer-ios-bin', '0.3.1-build-20151125'
+    ss.dependency 'FFmpeg4ijkplayer-ios-bin', '0.3.1-build-20151201'
 
     ss.source_files         = 'ijkmedia/ijksdl/**/*.{c,h}'
     ss.private_header_files = 'ijkmedia/ijksdl/**/*.h'
